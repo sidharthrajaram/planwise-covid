@@ -147,6 +147,10 @@ def results(query=None, advanced=True):
             else:
                 waiting_score = 0
                 c['waiting_score'] = 0
+            
+            if 'types' in c:
+                if 'bar' in c['types'] or 'amusement_park' in c['types'] or 'beauty_salon' in c['types'] or 'bowling_alley' in c['types'] or 'casino' in c['types'] or 'gym' in c['types'] or 'hair_care' in c['types'] or 'travel_agency' in c['types'] or 'subway_station' in c['types'] or 'spa' in c['types'] or 'night_club' in c['types'] or 'library' in c['types']:
+                    c['caution'] = True
 
             composite_score = exp_score + r + n_score - waiting_score
             c['comp_score'] = round(composite_score, 3)

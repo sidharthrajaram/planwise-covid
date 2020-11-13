@@ -18,6 +18,11 @@
         {% for result in results %}
         <div class="card" style="padding:1em">
           <div class="card-content">
+            {% if 'caution' in result %}
+            <h4 style="color:darkred;">
+              Unsafe type of place: Advisory Recommended
+            </h4>
+            {% endif %}
             <h5>
               {% if 'comp_score' in result %}
                 <b>{{ result.comp_score }}</b> PlanScore
