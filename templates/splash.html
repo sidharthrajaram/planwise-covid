@@ -38,11 +38,11 @@
 <main role="main" class="flex-shrink-0">
   <div class="container">
     <h1 class="mt-5">Yack</h1>
-    <p class="lead">This is our awesome thingy haha.</p>
-    <p>Use <a href="../examples/sticky-footer-navbar/">the sticky footer with a fixed navbar</a> if need be, too.</p>
+    <h3>Plan around the pandemic.</h3>
+    <p class="lead">Type in where you want to go. <br/> We'll tell you what's the best option in terms of quality, crowd, and distance.</p>
 
 
-    <form action="{{ url_for('go') }}" method="post">
+    <form action="{{ url_for('go') }}" method="post" style="margin-top: 2em;">
         <div class="mb-3">
             <label for="query">Where to?</label>
             <input type="text" class="form-control" name="query" id="query" placeholder="Pharmacy..." required>
@@ -55,7 +55,7 @@
 
 <footer class="footer mt-auto py-3">
   <div class="container">
-    <span class="text-muted">Place sticky footer content here.</span>
+    <span class="text-muted">Stay safe. Wash your hands. Stop the spread.</span>
   </div>
 </footer>
 </body>

@@ -114,6 +114,8 @@ def results(query=None, advanced=True):
         hour = datetime.datetime.now().hour
         day_num = datetime.datetime.now().weekday()
         scores = []
+
+        noise = []
         
         for c in cleaned_data:
             if 'current_popularity' in c and 'populartimes' in c:
@@ -121,23 +123,27 @@ def results(query=None, advanced=True):
                 c['exp_score'] = round(exp_score, 3)
             else:
                 exp_score = 0
+                c['exp_score'] = exp_score
 
             if 'rating' in c:
                 r = c['rating']
             else:
                 r = 3.6
+                c['rating'] = r
             
             if 'rating_n' in c:
                 n_score = math.atan(c['rating_n']/3)/3
                 c['n_score'] = round(n_score, 3)
             else:
                 n_score = 0
+                c['n_score'] = 0
             
             if 'time_wait' in c:
                 waiting_score = c['time_wait'][day_num]['data'][hour]
                 c['waiting_score'] = round(waiting_score, 3)
             else:
                 waiting_score = 0
+                c['waiting_score'] = 0
 
             composite_score = exp_score + r + n_score - waiting_score
             c['comp_score'] = round(composite_score, 3)
@@ -147,6 +153,6 @@ def results(query=None, advanced=True):
 
         cleaned_data = [x for _, __, x in sorted(zip(scores, noise, cleaned_data), reverse=True)]
 
-        return render_template('results.html', results=cleaned_data, og_query=query)
+        return render_template('results.html', results=cleaned_data, og_query=query, best=cleaned_data[0]['name'], best_addy=cleaned_data[0]['address'])
 
     return render_template('splash.html')
