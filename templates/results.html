@@ -6,22 +6,46 @@
 </head>
 
 <body>
-    {% if results %}
-     <!-- <h1>{{ results }}!</h1> -->
-      {% for result in results %}
-      <div class="card">
-        <div class="card-content">
-          <h3 class="card-name">
-            {{result.name}}
-          </h3>
-          <h6 class="card-address">
-            {{result.address}}
-          </h6>
-          {{result.rating}} / 5 stars
-        </div>
-      </div>	
-      {% endfor %}
-    {% else %}
-      <h1>Hello, World!</h1>
-    {% endif %}
+  <div style="margin-top: 2em; margin-left: 2em; margin-right:2em;">
+      {% if results %}
+      <h2>Here are the best options for going to "<b>{{ og_query }}</b>"</h2>
+      <p>Destinations with higher ratings, less crowd and smaller wait times are ranked the highest.</p>
+      <!-- <h1>{{ results }}!</h1> -->
+        {% for result in results %}
+        <div class="card" style="padding:1em">
+          <div class="card-content">
+            <h5>
+              {% if 'comp_score' in result %}
+                <b>{{ result.comp_score }}</b>
+              {% endif %}
+            </h5>
+            <h3 class="card-name">
+              {{result.name}}
+            </h3>
+            <h6 class="card-address">
+              {{result.address}}
+            </h6>
+            {{result.rating}} / 5 stars
+
+            <p>
+            {% if 'exp_score' in result %}
+                {{ result.exp_score }}
+            {% endif %}
+            </p>
+
+          </p>
+            {% if 'waiting_score' in result %}
+                {{ result.waiting_score }}
+            {% endif %}
+          </p>
+
+          </div>
+
+
+        </div>	
+        {% endfor %}
+      {% else %}
+        <h1>Hello, World!</h1>
+      {% endif %}
+   </div>
 </body>

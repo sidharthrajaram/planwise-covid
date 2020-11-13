@@ -73,7 +73,7 @@ def clean_candidates(candidates):
     clean_candidates = []
     for candidate in candidates:
         popularity_data = populartimes.get_id(google_api_key, candidate["place_id"])
-        print(popularity_data)
+        # print(popularity_data)
         # candidate is a JSON element
         clean_candidate = {"name": candidate["name"], 
                             "types": candidate["types"], 
@@ -115,9 +115,10 @@ def results(query=None, advanced=True):
         day_num = datetime.datetime.now().weekday()
         scores = []
         
-        for c in candidates:
+        for c in cleaned_data:
             if 'current_popularity' in c and 'populartimes' in c:
                 exp_score = math.e ** (- c['populartimes'][day_num]['data'][hour] / c['current_popularity'])
+                c['exp_score'] = round(exp_score, 3)
             else:
                 exp_score = 0
 
@@ -128,18 +129,24 @@ def results(query=None, advanced=True):
             
             if 'rating_n' in c:
                 n_score = math.atan(c['rating_n']/3)/3
+                c['n_score'] = round(n_score, 3)
             else:
                 n_score = 0
             
             if 'time_wait' in c:
                 waiting_score = c['time_wait'][day_num]['data'][hour]
+                c['waiting_score'] = round(waiting_score, 3)
             else:
                 waiting_score = 0
 
-            scores.append(exp_score + r + n_score - waiting_score)
+            composite_score = exp_score + r + n_score - waiting_score
+            c['comp_score'] = round(composite_score, 3)
+
+            scores.append(composite_score)
             noise = [random() for _ in range(len(scores))]
+
         cleaned_data = [x for _, __, x in sorted(zip(scores, noise, cleaned_data), reverse=True)]
 
-        return render_template('results.html', results=cleaned_data)
+        return render_template('results.html', results=cleaned_data, og_query=query)
 
     return render_template('splash.html')
