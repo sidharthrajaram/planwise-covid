@@ -37,14 +37,14 @@
     <!-- Begin page content -->
 <main role="main" class="flex-shrink-0">
   <div class="container">
-    <h1 class="mt-5">Yack</h1>
+    <h1 class="mt-5">Planwise</h1>
     <h3>Plan around the pandemic.</h3>
-    <p class="lead">Type in where you want to go. <br/> We'll tell you what's the best option in terms of quality, crowd, and distance.</p>
+    <p class="lead">1. Type in where you want to go. <br/> 2. We'll tell you what's the best option in terms of quality, crowd, and distance.</p>
 
 
     <form action="{{ url_for('go') }}" method="post" style="margin-top: 2em;">
         <div class="mb-3">
-            <label for="query">Where to?</label>
+            <h3><label for="query">Where to?</label>
             <input type="text" class="form-control" name="query" id="query" placeholder="Pharmacy..." required>
         </div>
         <button class="btn btn-primary btn-lg btn-block" type="submit">Go</button>
