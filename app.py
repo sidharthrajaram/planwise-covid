@@ -1,7 +1,7 @@
 from flask import render_template
 from flask import Flask
 from flask import request, jsonify, redirect, url_for
-import populartimes as places
+import populartimes
 import requests
 
 default_ip = '40.78.55.113' # some san jose microsoft ip lol
@@ -26,7 +26,7 @@ def get_user_location(user_ip_addr=default_ip):
     return cleaned
 
 # basic find places by keywords
-def find_places(keyword):
+def find_places_basic(keyword):
     params = {"input":keyword, 
             "inputtype":"textquery", 
             "fields":"formatted_address,name,rating,opening_hours,place_id,types,business_status",
@@ -36,24 +36,20 @@ def find_places(keyword):
 
 # nearby places, more sophisticated, requirres location information
 def find_places_advanced(keyword, latitude, longitude, radius=1000):
-    params = {"keyword":keyword, 
-            "location": [latitude, longitude], 
-            "radius":radius,
-            "key":google_api_key}
-    print(params)
-    data = requests.get(url=google_places_endpoint, params=params) 
+    url = google_places_advanced_endpoint
+    url += "?location="+str(latitude)+", "+str(longitude)+"&radius="+str(radius)+"&keyword="+keyword+"&key="+google_api_key
+    data = requests.get(url=url) 
     return data.json()
 
 # home page
 @app.route('/')
 def splash():
-    print(format(request.remote_addr))
-    location_data = get_user_location()
-    print(location_data)
-    print()
-    print(find_places('bar'))
-    print()
-    print(find_places_advanced('park', location_data["latitude"], location_data["longitude"]))
+    # location_data = get_user_location() # THIS IS NO PARAM BY DEFAULT (testing purposes)
+    # print(location_data)
+    # print()
+    # print(find_places_basic('bar'))
+    # print()
+    # print(find_places_advanced('park', location_data["latitude"], location_data["longitude"]))
     return render_template('splash.html')
 
 
@@ -70,16 +66,49 @@ def go():
     return render_template('splash.html')
 
 
+def clean_candidates(candidates):
+    clean_candidates = []
+    for candidate in candidates:
+        popularity_data = populartimes.get_id(google_api_key, candidate["place_id"])
+        print(popularity_data)
+        # candidate is a JSON element
+        clean_candidate = {"name": candidate["name"], 
+                            "types": candidate["types"], 
+                            "business_status": candidate["business_status"],
+                            "address": popularity_data["address"],
+                          }
 
+        if "populartimes" in popularity_data:
+            clean_candidate["populartimes"] = popularity_data["populartimes"]
+        if "current_popularity" in popularity_data:
+            clean_candidate["current_popularity"] = popularity_data["current_popularity"]
+        if "time_spent" in popularity_data:
+            clean_candidate["time_spent"] = popularity_data["time_spent"]
+        if "rating_n" in popularity_data:
+            clean_candidate["rating_n"] = popularity_data["rating_n"]
+        if "rating" in popularity_data:
+            clean_candidate["rating"] = popularity_data["rating"]
 
+        clean_candidates.append(clean_candidate)
+
+    return clean_candidates
 
 
 # presenting the ranking / results / sauce
 @app.route('/results/')
 @app.route('/results/<query>')
-def results(query=None):
-    # the query will be sauced and handled here
-    # the ranking thing will prolly be used here
-    # need to pass multiple params to template
-    # make a template with if statement
-    return render_template('results.html', query=query)
+def results(query=None, advanced=False):
+    if query is not None:
+        # query = ... ?
+        location_data = get_user_location() # random SJ warehouse lol, in real pass request.remote_addr
+        if advanced:
+            candidates = find_places_advanced(query, location_data["latitude"], location_data["longitude"])["results"]
+        else:
+            candidates = find_places_basic(query)["candidates"]
+        
+        cleaned_data = clean_candidates(candidates)
+
+
+        return render_template('results.html', results=cleaned_data)
+
+    return render_template('splash.html')
