@@ -5,6 +5,7 @@ import populartimes
 import requests
 import datetime
 import math
+from random import random
 
 default_ip = '40.78.55.113' # some san jose microsoft ip lol
 
@@ -126,7 +127,7 @@ def results(query=None, advanced=True):
                 r = 3.6
             
             if 'rating_n' in c:
-                n_score = math.atan(n/3)/3
+                n_score = math.atan(c['rating_n']/3)/3
             else:
                 n_score = 0
             
@@ -136,8 +137,8 @@ def results(query=None, advanced=True):
                 waiting_score = 0
 
             scores.append(exp_score + r + n_score - waiting_score)
-        
-        cleaned_data = [x for _,x in sorted(zip(scores,cleaned_data), reverse=True)]
+            noise = [random() for _ in range(len(scores))]
+        cleaned_data = [x for _, __, x in sorted(zip(scores, noise, cleaned_data), reverse=True)]
 
         return render_template('results.html', results=cleaned_data)
 
