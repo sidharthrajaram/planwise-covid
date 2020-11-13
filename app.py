@@ -9,15 +9,16 @@ app = Flask(__name__)
 def splash():
     return render_template('splash.html')
 
-@app.route('/results/<query>')
-def results(query):
-    # results of the search
-    return jsonify({"the query":query})
-
-
 @app.route('/go', methods = ['POST', 'GET'])
 def go():
     if request.method == 'POST':
         print(request.form['query'])
         return redirect((url_for('results', query=request.form['query'])))
     return render_template('splash.html')
+
+@app.route('/results/')
+@app.route('/results/<query>')
+def results(query=None):
+    # the query will be sauced and handled here
+    # make a template with if statement
+    return render_template('results.html', query=query)
