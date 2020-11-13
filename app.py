@@ -9,11 +9,11 @@ from random import random
 
 default_ip = '40.78.55.113' # some san jose microsoft ip lol
 
-google_api_key = 'AIzaSyD7vPDsCi7bnYdbiFGRD5FDq8nor5EB4D0'
+google_api_key = 'YOUR_GOOGLE_PLACES_API_KEY'
 google_places_endpoint = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
 google_places_advanced_endpoint = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 
-ipstack_api_key = 'b2cfd213fc3f26ea12b0f109bcb9d956'
+ipstack_api_key = 'YOUR_IPSTACK_API_KEY'
 ipstack_endpoint = "http://api.ipstack.com/"
 
 app = Flask(__name__)
