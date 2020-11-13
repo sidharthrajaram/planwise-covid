@@ -109,9 +109,9 @@ def results(query=None, advanced=True):
         else:
             candidates = find_places_basic(query)["candidates"]
         
-        if len(cleaned_data) < 1:
+        if len(candidates) < 1:
             candidates = find_places_basic(query)["candidates"]
-            
+
         cleaned_data = clean_candidates(candidates)
         
         hour = datetime.datetime.now().hour
