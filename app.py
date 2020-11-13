@@ -3,6 +3,8 @@ from flask import Flask
 from flask import request, jsonify, redirect, url_for
 import populartimes
 import requests
+import datetime
+import math
 
 default_ip = '40.78.55.113' # some san jose microsoft ip lol
 
@@ -97,7 +99,7 @@ def clean_candidates(candidates):
 # presenting the ranking / results / sauce
 @app.route('/results/')
 @app.route('/results/<query>')
-def results(query=None, advanced=False):
+def results(query=None, advanced=True):
     if query is not None:
         # query = ... ?
         location_data = get_user_location() # random SJ warehouse lol, in real pass request.remote_addr
@@ -107,7 +109,35 @@ def results(query=None, advanced=False):
             candidates = find_places_basic(query)["candidates"]
         
         cleaned_data = clean_candidates(candidates)
+        
+        hour = datetime.datetime.now().hour
+        day_num = datetime.datetime.now().weekday()
+        scores = []
+        
+        for c in candidates:
+            if 'current_popularity' in c and 'populartimes' in c:
+                exp_score = math.e ** (- c['populartimes'][day_num]['data'][hour] / c['current_popularity'])
+            else:
+                exp_score = 0
 
+            if 'rating' in c:
+                r = c['rating']
+            else:
+                r = 3.6
+            
+            if 'rating_n' in c:
+                n_score = math.atan(n/3)/3
+            else:
+                n_score = 0
+            
+            if 'time_wait' in c:
+                waiting_score = c['time_wait'][day_num]['data'][hour]
+            else:
+                waiting_score = 0
+
+            scores.append(exp_score + r + n_score - waiting_score)
+        
+        cleaned_data = [x for _,x in sorted(zip(scores,cleaned_data), reverse=True)]
 
         return render_template('results.html', results=cleaned_data)
 
