@@ -1,4 +1,4 @@
-# Planwise
+![cover](cover.png?raw=true "Planwise")
 
 The COVID-19 pandemic has changed the way we go about everyday errands and trips. Along with needing to plan around wait times, distance, and reviews for a location we may want to visit, we now also need to consider how many other people will be there and whether its even a safe establishment to visit. *Planwise helps us plan our trips better.*
 
